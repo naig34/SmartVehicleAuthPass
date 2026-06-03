@@ -1,0 +1,1 @@
+ALTER TABLE vehicles ADD COLUMN orcr_image VARCHAR(255) NULL;

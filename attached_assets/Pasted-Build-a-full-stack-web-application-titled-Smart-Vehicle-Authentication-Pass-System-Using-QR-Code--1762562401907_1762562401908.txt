@@ -1,0 +1,166 @@
+Build a full-stack web application titled **"Smart Vehicle Authentication Pass System Using QR Code"** using **HTML, CSS, JavaScript (for front-end)** and **PHP with MySQL (for back-end)**. It should run perfectly on Replit or XAMPP.
+
+💡 PROJECT OVERVIEW:
+This system will manage and authenticate vehicles using QR codes. There are **4 user roles: Admin, Guard, Teacher/Staff, and Student.**
+
+---
+
+### 🧩 ROLE DESCRIPTIONS & FUNCTIONS
+
+#### 🧑‍💼 Admin:
+- Must sign up once (Name, Username, Password, Confirm Password).
+- Only one admin account allowed.
+- Can later change admin account (option to replace with new one).
+- After login → Admin Dashboard with navigation menu:
+  - **Manage Vehicles**
+    - Register Vehicle
+      - Option: Teacher/Staff or Student (Dropdown)
+      - For Student: Name, School ID, School Email, Year & Section, Sex, Course, Birthdate, Age
+      - For Teacher/Staff: Name, Employee ID, Sex, Course, Birthdate, Age
+      - For Both:
+        - Vehicle Type (Dropdown: Car / Motorcycle)
+        - Vehicle Picture (Upload)
+        - Registered Under (Name)
+        - Color, Brand, Plate Number
+        - Status (Expired / Not Expired / Revoked)
+        - Date of Register, Date of Expiration
+        - Generate QR Code
+    - **Update Vehicle**
+    - **Delete Vehicle**
+    - **View Vehicle QR Code**
+    - **View All Vehicles**
+      - Dropdown filter: View by “Teacher/Staff” or “Student”
+  - Expiration rules:
+    - Car → 1 Year validity
+    - Motorcycle → 6 Months validity
+  - If Revoked → Owner must wait **3 weeks** or **renew** with a new QR code sticker (make renewal an option).
+  - Logout button
+
+---
+
+#### 🚓 Guard:
+- Must Sign up: (Name, Employee ID, Sex, Password)
+- Then Login (Employee ID & Password)
+- Guard Dashboard:
+  - **Scan Vehicle QR Code**
+  - Display vehicle details and status (Not Expired / Expired / Revoked)
+  - Status should appear **large and color-coded:**
+    - 🟢 Green = Not Expired
+    - 🔴 Red = Expired
+    - 🟠 Orange = Revoked
+  - Logout button
+
+---
+
+#### 👩‍🏫 Teacher/Staff:
+- Login using: Employee ID and Password
+- Dashboard shows:
+  - Personal details (Name, ID, etc.)
+  - Vehicle details
+  - Vehicle status and expiration date
+  - Option to **Change Password** (no authentication required)
+  - Logout button
+
+---
+
+#### 👩‍🎓 Student:
+- Login using: School Email and Password
+- Dashboard shows:
+  - Personal details (Name, ID, Course, etc.)
+  - Vehicle details
+  - Vehicle status and expiration date
+  - Option to **Change Password**
+  - Logout button
+
+---
+
+### 📸 HOME PAGE:
+- Title: “Smart Vehicle Authentication Pass System Using QR Code”
+- Display a **background image of a parking lot or parked vehicles** (use any free stock image or generate one dynamically)
+- Include “Login as Admin / Guard / Teacher-Staff / Student” buttons
+- Neat, responsive Bootstrap layout with navigation bar.
+
+---
+
+### 🗄️ DATABASE STRUCTURE (MySQL)
+Database name: `smart_vehicle_db`
+
+Tables:
+1. **admin**
+   - id (INT, AUTO_INCREMENT)
+   - name
+   - username
+   - password
+
+2. **guards**
+   - id
+   - name
+   - employee_id
+   - sex
+   - password
+
+3. **teachers_staff**
+   - id
+   - name
+   - employee_id
+   - sex
+   - course
+   - birthdate
+   - age
+   - password
+
+4. **students**
+   - id
+   - name
+   - school_id
+   - email
+   - year_section
+   - sex
+   - course
+   - birthdate
+   - age
+   - password
+
+5. **vehicles**
+   - id
+   - owner_type (ENUM: 'Teacher/Staff', 'Student')
+   - owner_id (FOREIGN KEY)
+   - type (Car/Motorcycle)
+   - picture
+   - registered_under
+   - color
+   - brand
+   - plate_number
+   - status (Expired / Not Expired / Revoked)
+   - date_registered
+   - date_expiration
+   - qr_code_path
+
+---
+
+### 🧾 EXTRA REQUIREMENTS:
+- Use **Bootstrap 5** for responsive layout.
+- Use **PHP QR Code library** to generate and display QR codes.
+- Include a **Logout** button for all roles.
+- All pages should be simple, clear, and functional.
+- QR scanning (for Guard) can use a built-in camera script (like `html5-qrcode`).
+- Automatically color-highlight status text according to its meaning.
+
+---
+
+### 🎨 UI THEME SUGGESTION:
+- Admin: Blue Dashboard
+- Guard: Gray-Blue Interface
+- Teacher/Staff: Green Accent
+- Student: Orange Accent
+- Homepage: Clean white background with a parking image header.
+
+---
+
+### 🖼️ IMAGE TO USE:
+Generate or use a parking area image (e.g. parked vehicles background). If Replit supports image generation, use a generated image of a **school parking lot with cars and motorcycles neatly parked.**
+
+---
+
+### ✅ GOAL:
+A functional **PHP + MySQL QR Code Vehicle Authentication Website** hosted on Replit with all CRUD features, QR generation, scanning, authentication per role, and status highlighting.

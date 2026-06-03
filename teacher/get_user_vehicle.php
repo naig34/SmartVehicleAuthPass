@@ -1,0 +1,1 @@
+<?php session_start(); require_once '../config/db.php'; $id=$_SESSION['teacher_id']; $q=$pdo->query("SELECT * FROM vehicles WHERE owner_type='Teacher/Staff' LIMIT 1"); echo json_encode($q->fetch(PDO::FETCH_ASSOC));

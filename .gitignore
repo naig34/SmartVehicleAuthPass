@@ -1,0 +1,16 @@
+# Ignore sensitive config (use environment variables on Render)
+config/db_local.php
+
+# Ignore uploaded files (these live on the server, not in git)
+uploads/profile_pictures/*
+uploads/vehicles/*
+uploads/qr_codes/*
+
+# Keep the folders but not the files inside
+!uploads/profile_pictures/.gitkeep
+!uploads/vehicles/.gitkeep
+!uploads/qr_codes/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
