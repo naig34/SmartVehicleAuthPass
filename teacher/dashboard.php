@@ -1,23 +1,28 @@
 <?php
 session_start();
-if (!isset($_SESSION['teacher_id'])) {
+if (!isset($_SESSION['student_id'])) {
     header('Location: login.php');
     exit;
 }
 
 require_once '../config/db.php';
 
-$teacher_id = $_SESSION['teacher_id'];
+$student_id = $_SESSION['student_id'];
 
-$stmt = $pdo->prepare("SELECT * FROM teachers_staff WHERE id = ?");
-$stmt->execute([$teacher_id]);
-$teacher = $stmt->fetch();
+$stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
+$stmt->execute([$student_id]);
+$student = $stmt->fetch();
 
-if (!$teacher) {
+if (!$student) {
     session_destroy();
     header('Location: login.php');
     exit;
 }
+
+// Build $picSrc once here for use throughout the template
+$picSrc = (!empty($student['profile_picture']) && strpos($student['profile_picture'], 'http') === 0)
+    ? $student['profile_picture']
+    : (!empty($student['profile_picture']) ? '../' . $student['profile_picture'] : null);
 
 function generateQRCode($data, $filename) {
     $qr_data = urlencode($data);
@@ -37,27 +42,27 @@ function generateQRCode($data, $filename) {
 }
 
 $qr_code_generated = false;
-if (empty($teacher['qr_code_path'])) {
+if (empty($student['qr_code_path'])) {
     $qr_data = json_encode([
-        'type' => 'teacher',
-        'id' => $teacher['id'],
-        'name' => $teacher['name'],
-        'employee_id' => $teacher['employee_id']
+        'type' => 'student',
+        'id' => $student['id'],
+        'name' => $student['name'],
+        'school_id' => $student['school_id']
     ]);
 
-    $qr_filename = 'teacher_' . $teacher['id'] . '_' . time() . '.png';
+    $qr_filename = 'student_' . $student['id'] . '_' . time() . '.png';
     $relative_qr_path = generateQRCode($qr_data, $qr_filename);
 
     if ($relative_qr_path) {
-        $stmt = $pdo->prepare("UPDATE teachers_staff SET qr_code_path = ? WHERE id = ?");
-        $stmt->execute([$relative_qr_path, $teacher['id']]);
-        $teacher['qr_code_path'] = $relative_qr_path;
+        $stmt = $pdo->prepare("UPDATE students SET qr_code_path = ? WHERE id = ?");
+        $stmt->execute([$relative_qr_path, $student['id']]);
+        $student['qr_code_path'] = $relative_qr_path;
         $qr_code_generated = true;
     }
 }
 
-$stmt = $pdo->prepare("SELECT * FROM vehicles WHERE owner_type = 'Teacher/Staff' AND (owner_id = ? OR teacher_owner_id = ?)");
-$stmt->execute([$teacher_id, $teacher_id]);
+$stmt = $pdo->prepare("SELECT * FROM vehicles WHERE owner_type = 'Student' AND (owner_id = ? OR student_owner_id = ?)");
+$stmt->execute([$student_id, $student_id]);
 $vehicles = $stmt->fetchAll();
 
 $today = date('Y-m-d');
@@ -74,28 +79,28 @@ foreach ($vehicles as &$vehicle) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard</title>
+    <title>Student Dashboard</title>
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <style>
         :root {
-            --teacher-primary: #10b981;
-            --teacher-primary-light: #34d399;
-            --teacher-primary-rgb: 16, 185, 129;
+            --student-primary: #3b82f6;
+            --student-primary-light: #60a5fa;
+            --student-primary-rgb: 59, 130, 246;
         }
 
-        .teacher-dashboard {
-            --theme-color: var(--teacher-primary);
-            --theme-color-light: var(--teacher-primary-light);
-            --theme-color-rgb: var(--teacher-primary-rgb);
+        .student-dashboard {
+            --theme-color: var(--student-primary);
+            --theme-color-light: var(--student-primary-light);
+            --theme-color-rgb: var(--student-primary-rgb);
         }
 
         .hero-section {
-            background: linear-gradient(135deg, var(--teacher-primary) 0%, var(--teacher-primary-light) 100%);
+            background: linear-gradient(135deg, var(--student-primary) 0%, var(--student-primary-light) 100%);
             padding: 40px;
             border-radius: 20px;
             color: white;
             margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
         }
 
         .hero-content {
@@ -160,10 +165,10 @@ foreach ($vehicles as &$vehicle) {
             width: 140px;
             height: 140px;
             border-radius: 50%;
-            border: 5px solid var(--teacher-primary);
+            border: 5px solid var(--student-primary);
             padding: 5px;
             margin: 0 auto 20px;
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
         }
 
         .profile-avatar-large img {
@@ -182,7 +187,7 @@ foreach ($vehicles as &$vehicle) {
 
         .profile-id-badge {
             display: inline-block;
-            background: linear-gradient(135deg, var(--teacher-primary) 0%, var(--teacher-primary-light) 100%);
+            background: linear-gradient(135deg, var(--student-primary) 0%, var(--student-primary-light) 100%);
             color: white;
             padding: 8px 20px;
             border-radius: 20px;
@@ -276,7 +281,7 @@ foreach ($vehicles as &$vehicle) {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: linear-gradient(135deg, var(--teacher-primary) 0%, var(--teacher-primary-light) 100%);
+            background: linear-gradient(135deg, var(--student-primary) 0%, var(--student-primary-light) 100%);
             color: white;
             padding: 10px 18px;
             border-radius: 12px;
@@ -365,7 +370,7 @@ foreach ($vehicles as &$vehicle) {
             top: 25px;
             right: 25px;
             background: white;
-            color: var(--teacher-primary);
+            color: var(--student-primary);
             padding: 12px 28px;
             border-radius: 12px;
             text-decoration: none;
@@ -382,7 +387,7 @@ foreach ($vehicles as &$vehicle) {
 
         .profile-upload-btn {
             display: inline-block;
-            background: linear-gradient(135deg, var(--teacher-primary) 0%, var(--teacher-primary-light) 100%);
+            background: linear-gradient(135deg, var(--student-primary) 0%, var(--student-primary-light) 100%);
             color: white;
             padding: 10px 20px;
             border-radius: 10px;
@@ -391,12 +396,12 @@ foreach ($vehicles as &$vehicle) {
             font-size: 0.9rem;
             transition: all 0.3s ease;
             margin-top: 15px;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .profile-upload-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
         }
 
         @media (max-width: 1024px) {
@@ -514,7 +519,7 @@ foreach ($vehicles as &$vehicle) {
     });
 </script>
 </head>
-<body class="teacher-dashboard">
+<body class="student-dashboard">
     <button id="darkModeToggle" title="Toggle Dark Mode" style="background:none;border:2px solid #e5e7eb;border-radius:10px;padding:7px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#6b7280;font-size:0.85rem;font-weight:600;transition:all 0.3s;margin-right:8px;">
         <svg id="darkModeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:18px;height:18px;stroke-width:2;">
             <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
@@ -527,7 +532,7 @@ foreach ($vehicles as &$vehicle) {
         <div class="hero-section">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h1>Welcome back, <?= htmlspecialchars($teacher['name']) ?></h1>
+                    <h1>Welcome back, <?= htmlspecialchars($student['name']) ?></h1>
                     <p>Here's your vehicle registration overview</p>
                 </div>
                 <div class="hero-stats">
@@ -554,45 +559,52 @@ foreach ($vehicles as &$vehicle) {
             <div>
                 <div class="profile-card-modern">
                     <div class="profile-avatar-large">
-                        <?php if (!empty($teacher['profile_picture'])): ?>
-                            <img src="../<?= htmlspecialchars($teacher['profile_picture']) ?>" alt="Profile Picture">
+                        <?php if (!empty($picSrc)): ?>
+                            <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile Picture">
                         <?php else: ?>
-                            <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Default Profile">
+                            <img src="https://images.pexels.com/photos/1212984/pexels-photo-1212984.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Default Profile">
                         <?php endif; ?>
                     </div>
 
-                    <div class="profile-name-large"><?= htmlspecialchars($teacher['name']) ?></div>
-                    <div class="profile-id-badge">ID: <?= htmlspecialchars($teacher['employee_id']) ?></div>
+                    <div class="profile-name-large"><?= htmlspecialchars($student['name']) ?></div>
+                    <div class="profile-id-badge">ID: <?= htmlspecialchars($student['school_id']) ?></div>
 
                     <a href="upload_profile_picture.php" class="profile-upload-btn">Change Profile Picture</a>
 
 
                     <div class="info-chips">
-                        <?php if (!empty($teacher['course'])): ?>
+                        <?php if (!empty($student['email'])): ?>
                         <div class="info-chip">
-                            <span class="info-chip-label">Department</span>
-                            <span class="info-chip-value"><?= htmlspecialchars($teacher['course']) ?></span>
+                            <span class="info-chip-label">Email</span>
+                            <span class="info-chip-value"><?= htmlspecialchars($student['email']) ?></span>
                         </div>
                         <?php endif; ?>
 
-                        <?php if (!empty($teacher['sex'])): ?>
+                        <?php if (!empty($student['course'])): ?>
+                        <div class="info-chip">
+                            <span class="info-chip-label">Course</span>
+                            <span class="info-chip-value"><?= htmlspecialchars($student['course']) ?></span>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($student['year_section'])): ?>
+                        <div class="info-chip">
+                            <span class="info-chip-label">Year & Section</span>
+                            <span class="info-chip-value"><?= htmlspecialchars($student['year_section']) ?></span>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($student['sex'])): ?>
                         <div class="info-chip">
                             <span class="info-chip-label">Gender</span>
-                            <span class="info-chip-value"><?= htmlspecialchars($teacher['sex']) ?></span>
+                            <span class="info-chip-value"><?= htmlspecialchars($student['sex']) ?></span>
                         </div>
                         <?php endif; ?>
 
-                        <?php if (!empty($teacher['age'])): ?>
+                        <?php if (!empty($student['age'])): ?>
                         <div class="info-chip">
                             <span class="info-chip-label">Age</span>
-                            <span class="info-chip-value"><?= htmlspecialchars($teacher['age']) ?> years old</span>
-                        </div>
-                        <?php endif; ?>
-
-                        <?php if (!empty($teacher['birthdate'])): ?>
-                        <div class="info-chip">
-                            <span class="info-chip-label">Birth Date</span>
-                            <span class="info-chip-value"><?= date('M d, Y', strtotime($teacher['birthdate'])) ?></span>
+                            <span class="info-chip-value"><?= htmlspecialchars($student['age']) ?> years old</span>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -600,10 +612,10 @@ foreach ($vehicles as &$vehicle) {
                     <div class="qr-card-modern">
                         <h4>Your QR Code</h4>
                         <div class="qr-code-display">
-                            <?php if (!empty($teacher['qr_code_path'])): ?>
-                                <img src="../<?= htmlspecialchars($teacher['qr_code_path']) ?>" alt="QR Code">
+                            <?php if (!empty($student['qr_code_path'])): ?>
+                                <img src="../<?= htmlspecialchars($student['qr_code_path']) ?>" alt="QR Code">
                                 <p style="margin-top: 15px; color: #6b7280; font-size: 0.9rem;">Use this for identification</p>
-                                <a href="../<?= htmlspecialchars($teacher['qr_code_path']) ?>" download="my_qr_code.png" style="display:inline-block;margin-top:12px;padding:8px 20px;background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#fff;border-radius:8px;font-size:0.85rem;font-weight:600;text-decoration:none;box-shadow:0 2px 8px rgba(37,99,235,0.25);transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">⬇ Download QR Code</a>
+                                <a href="../<?= htmlspecialchars($student['qr_code_path']) ?>" download="my_qr_code.png" style="display:inline-block;margin-top:12px;padding:8px 20px;background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#fff;border-radius:8px;font-size:0.85rem;font-weight:600;text-decoration:none;box-shadow:0 2px 8px rgba(37,99,235,0.25);transition:opacity .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">⬇ Download QR Code</a>
                             <?php else: ?>
                                 <p style="color: #6b7280;">QR Code not available</p>
                             <?php endif; ?>
@@ -620,7 +632,7 @@ foreach ($vehicles as &$vehicle) {
                         <?php foreach ($vehicles as $vehicle): ?>
                         <div class="vehicle-card-modern">
 
-                            <?php if (!empty($vehicle['vehicle_image']) || !empty($teacher['profile_picture'])): ?>
+                            <?php if (!empty($vehicle['vehicle_image']) || !empty($picSrc)): ?>
                             <div style="margin-bottom:22px;">
                                 <div style="font-size:0.8rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Uploaded Documents</div>
                                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -634,11 +646,11 @@ foreach ($vehicles as &$vehicle) {
                                         </a>
                                     </div>
                                     <?php endif; ?>
-                                    <?php if (!empty($teacher['profile_picture'])): ?>
+                                    <?php if (!empty($picSrc)): ?>
                                     <div>
                                         <div style="font-size:0.78rem;font-weight:600;color:#9ca3af;margin-bottom:6px;text-align:center;">Owner's License</div>
-                                        <a href="../<?= htmlspecialchars($teacher['profile_picture']) ?>" target="_blank" title="View full size" style="display:block;">
-                                            <img src="../<?= htmlspecialchars($teacher['profile_picture']) ?>" alt="Owner's License"
+                                        <a href="<?= htmlspecialchars($picSrc) ?>" target="_blank" title="View full size" style="display:block;">
+                                            <img src="<?= htmlspecialchars($picSrc) ?>" alt="Owner's License"
                                                 style="width:100%;height:110px;object-fit:cover;border-radius:10px;border:2px solid #e5e7eb;transition:opacity .2s;"
                                                 onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
                                         </a>

@@ -19,6 +19,11 @@ if (!$student) {
     exit;
 }
 
+// Build $picSrc once here for use throughout the template
+$picSrc = (!empty($student['profile_picture']) && strpos($student['profile_picture'], 'http') === 0)
+    ? $student['profile_picture']
+    : (!empty($student['profile_picture']) ? '../' . $student['profile_picture'] : null);
+
 function generateQRCode($data, $filename) {
     $qr_data = urlencode($data);
     $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . $qr_data;
@@ -554,8 +559,8 @@ foreach ($vehicles as &$vehicle) {
             <div>
                 <div class="profile-card-modern">
                     <div class="profile-avatar-large">
-                        <?php if (!empty($student['profile_picture'])): ?>
-                            <img src="../<?= htmlspecialchars($student['profile_picture']) ?>" alt="Profile Picture">
+                        <?php if (!empty($picSrc)): ?>
+                            <img src="<?= htmlspecialchars($picSrc) ?>" alt="Profile Picture">
                         <?php else: ?>
                             <img src="https://images.pexels.com/photos/1212984/pexels-photo-1212984.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Default Profile">
                         <?php endif; ?>
@@ -627,7 +632,7 @@ foreach ($vehicles as &$vehicle) {
                         <?php foreach ($vehicles as $vehicle): ?>
                         <div class="vehicle-card-modern">
 
-                            <?php if (!empty($vehicle['vehicle_image']) || !empty($student['profile_picture'])): ?>
+                            <?php if (!empty($vehicle['vehicle_image']) || !empty($picSrc)): ?>
                             <div style="margin-bottom:22px;">
                                 <div style="font-size:0.8rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Uploaded Documents</div>
                                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -641,11 +646,11 @@ foreach ($vehicles as &$vehicle) {
                                         </a>
                                     </div>
                                     <?php endif; ?>
-                                    <?php if (!empty($student['profile_picture'])): ?>
+                                    <?php if (!empty($picSrc)): ?>
                                     <div>
                                         <div style="font-size:0.78rem;font-weight:600;color:#9ca3af;margin-bottom:6px;text-align:center;">Owner's License</div>
-                                        <a href="../<?= htmlspecialchars($student['profile_picture']) ?>" target="_blank" title="View full size" style="display:block;">
-                                            <img src="../<?= htmlspecialchars($student['profile_picture']) ?>" alt="Owner's License"
+                                        <a href="<?= htmlspecialchars($picSrc) ?>" target="_blank" title="View full size" style="display:block;">
+                                            <img src="<?= htmlspecialchars($picSrc) ?>" alt="Owner's License"
                                                 style="width:100%;height:110px;object-fit:cover;border-radius:10px;border:2px solid #e5e7eb;transition:opacity .2s;"
                                                 onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
                                         </a>
