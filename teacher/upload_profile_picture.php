@@ -1,21 +1,22 @@
 <?php
 session_start();
-if (!isset($_SESSION['teacher_id'])) {
+if (!isset($_SESSION['student_id'])) {
     header('Location: login.php');
     exit;
 }
 
 require_once '../config/db.php';
+require_once '../config/cloudinary.php';
 
-$teacher_id = $_SESSION['teacher_id'];
+$student_id = $_SESSION['student_id'];
 $error = '';
 $success = '';
 
-$stmt = $pdo->prepare("SELECT * FROM teachers_staff WHERE id = ?");
-$stmt->execute([$teacher_id]);
-$teacher = $stmt->fetch();
+$stmt = $pdo->prepare("SELECT * FROM students WHERE id = ?");
+$stmt->execute([$student_id]);
+$student = $stmt->fetch();
 
-if (!$teacher) {
+if (!$student) {
     session_destroy();
     header('Location: login.php');
     exit;
@@ -33,33 +34,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($file['size'] > $maxSize) {
             $error = 'File size exceeds 5MB limit.';
         } else {
-            $uploadDir = __DIR__ . '/../uploads/profile_pictures/';
-            if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
+            // Upload to Cloudinary instead of local server
+            $result = uploadToCloudinary($file['tmp_name'], 'smartvehicle/profiles');
 
-            $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $fileName = 'teacher_' . $teacher_id . '_' . time() . '.' . $fileExtension;
-            $uploadPath = $uploadDir . $fileName;
-            $relativePath = 'uploads/profile_pictures/' . $fileName;
-
-            if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-                // Only delete the old file if it is actually a profile picture, not a vehicle license
-                if (!empty($teacher['profile_picture'])
-                    && strpos($teacher['profile_picture'], 'uploads/profile_pictures/') !== false
-                    && file_exists(__DIR__ . '/../' . $teacher['profile_picture'])) {
-                    unlink(__DIR__ . '/../' . $teacher['profile_picture']);
-                }
-
-                $stmt = $pdo->prepare("UPDATE teachers_staff SET profile_picture = ? WHERE id = ?");
-                if ($stmt->execute([$relativePath, $teacher_id])) {
+            if ($result['success']) {
+                $cloudinaryUrl = $result['url'];
+                $stmt = $pdo->prepare("UPDATE students SET profile_picture = ? WHERE id = ?");
+                if ($stmt->execute([$cloudinaryUrl, $student_id])) {
                     $success = 'Profile picture updated successfully!';
-                    $teacher['profile_picture'] = $relativePath;
+                    $student['profile_picture'] = $cloudinaryUrl;
                 } else {
                     $error = 'Failed to update profile picture in database.';
                 }
             } else {
-                $error = 'Failed to upload file.';
+                $error = 'Failed to upload image: ' . $result['error'];
             }
         }
     } else {
@@ -82,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -125,8 +113,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             height: 150px;
             border-radius: 50%;
             object-fit: cover;
-            border: 5px solid #10b981;
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+            border: 5px solid #3b82f6;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
         }
 
         .current-picture p {
@@ -151,8 +139,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .file-input-wrapper:hover {
-            border-color: #10b981;
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
         }
 
         .file-input-wrapper input[type="file"] {
@@ -169,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 60px;
             height: 60px;
             margin: 0 auto 15px;
-            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -234,14 +222,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
             color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
         }
 
         .btn-secondary {
@@ -376,11 +364,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <div class="current-picture">
-            <?php if (!empty($teacher['profile_picture'])): ?>
-                <img src="../<?= htmlspecialchars($teacher['profile_picture']) ?>" alt="Current Profile Picture">
+            <?php if (!empty($student['profile_picture'])): ?>
+                <?php $picSrc = (strpos($student['profile_picture'], 'http') === 0) ? $student['profile_picture'] : '../' . $student['profile_picture']; ?>
+                <img src="<?= htmlspecialchars($picSrc) ?>" alt="Current Profile Picture">
                 <p>Current Profile Picture</p>
             <?php else: ?>
-                <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Default Profile">
+                <img src="https://images.pexels.com/photos/1212984/pexels-photo-1212984.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Default Profile">
                 <p>Default Profile Picture</p>
             <?php endif; ?>
         </div>
