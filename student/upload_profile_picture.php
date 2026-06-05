@@ -6,6 +6,7 @@ if (!isset($_SESSION['student_id'])) {
 }
 
 require_once '../config/db.php';
+require_once '../config/cloudinary.php';
 
 $student_id = $_SESSION['student_id'];
 $error = '';
@@ -33,33 +34,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($file['size'] > $maxSize) {
             $error = 'File size exceeds 5MB limit.';
         } else {
-            $uploadDir = __DIR__ . '/../uploads/profile_pictures/';
-            if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
+            // Upload to Cloudinary instead of local server
+            $result = uploadToCloudinary($file['tmp_name'], 'smartvehicle/profiles');
 
-            $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $fileName = 'student_' . $student_id . '_' . time() . '.' . $fileExtension;
-            $uploadPath = $uploadDir . $fileName;
-            $relativePath = 'uploads/profile_pictures/' . $fileName;
-
-            if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-                // Only delete the old file if it is actually a profile picture, not a vehicle license
-                if (!empty($student['profile_picture'])
-                    && strpos($student['profile_picture'], 'uploads/profile_pictures/') !== false
-                    && file_exists(__DIR__ . '/../' . $student['profile_picture'])) {
-                    unlink(__DIR__ . '/../' . $student['profile_picture']);
-                }
-
+            if ($result['success']) {
+                $cloudinaryUrl = $result['url'];
                 $stmt = $pdo->prepare("UPDATE students SET profile_picture = ? WHERE id = ?");
-                if ($stmt->execute([$relativePath, $student_id])) {
+                if ($stmt->execute([$cloudinaryUrl, $student_id])) {
                     $success = 'Profile picture updated successfully!';
-                    $student['profile_picture'] = $relativePath;
+                    $student['profile_picture'] = $cloudinaryUrl;
                 } else {
                     $error = 'Failed to update profile picture in database.';
                 }
             } else {
-                $error = 'Failed to upload file.';
+                $error = 'Failed to upload image: ' . $result['error'];
             }
         }
     } else {
@@ -377,7 +365,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="current-picture">
             <?php if (!empty($student['profile_picture'])): ?>
-                <img src="../<?= htmlspecialchars($student['profile_picture']) ?>" alt="Current Profile Picture">
+                <?php $picSrc = (strpos($student['profile_picture'], 'http') === 0) ? $student['profile_picture'] : '../' . $student['profile_picture']; ?>
+                <img src="<?= htmlspecialchars($picSrc) ?>" alt="Current Profile Picture">
                 <p>Current Profile Picture</p>
             <?php else: ?>
                 <img src="https://images.pexels.com/photos/1212984/pexels-photo-1212984.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Default Profile">

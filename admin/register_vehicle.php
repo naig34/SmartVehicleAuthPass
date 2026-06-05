@@ -11,6 +11,7 @@ error_reporting(E_ALL);
 
 require_once '../config/db.php';
 require_once '../config/helpers.php';
+require_once '../config/cloudinary.php';
 
 $error = '';
 $success = '';
@@ -136,10 +137,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_FILES['license_image']) && $_FILES['license_image']['error'] === UPLOAD_ERR_OK) {
             $fileExtension = strtolower(pathinfo($_FILES['license_image']['name'], PATHINFO_EXTENSION));
             if (in_array($fileExtension, $allowedExtensions)) {
-                $newFilename = $plateNumber . '_license_' . time() . '.' . $fileExtension;
-                $uploadPath = $uploadDir . $newFilename;
-                if (move_uploaded_file($_FILES['license_image']['tmp_name'], $uploadPath)) {
-                    $licenseImagePath = 'uploads/vehicles/' . $newFilename;
+                $result = uploadToCloudinary($_FILES['license_image']['tmp_name'], 'smartvehicle/vehicles');
+                if ($result['success']) {
+                    $licenseImagePath = $result['url'];
                 }
             }
         }
@@ -149,10 +149,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_FILES['owner_photo']) && $_FILES['owner_photo']['error'] === UPLOAD_ERR_OK) {
             $fileExtension = strtolower(pathinfo($_FILES['owner_photo']['name'], PATHINFO_EXTENSION));
             if (in_array($fileExtension, $allowedExtensions)) {
-                $newFilename = $plateNumber . '_photo_' . time() . '.' . $fileExtension;
-                $uploadPath = $uploadDir . $newFilename;
-                if (move_uploaded_file($_FILES['owner_photo']['tmp_name'], $uploadPath)) {
-                    $ownerPhotoPath = 'uploads/vehicles/' . $newFilename;
+                $result = uploadToCloudinary($_FILES['owner_photo']['tmp_name'], 'smartvehicle/vehicles');
+                if ($result['success']) {
+                    $ownerPhotoPath = $result['url'];
                 }
             }
         }

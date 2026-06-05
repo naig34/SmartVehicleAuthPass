@@ -292,7 +292,8 @@ $totalGuards = $pdo->query("SELECT COUNT(*) FROM guards")->fetchColumn();
                                 <tr>
                                     <td>
                                         <?php if (!empty($v['owner_photo'])): ?>
-                                            <img src="../<?= htmlspecialchars($v['owner_photo']) ?>" style="width:50px;height:50px;object-fit:cover;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+                                            <?php $photoSrc = (strpos($v['owner_photo'], 'http') === 0) ? $v['owner_photo'] : '../' . $v['owner_photo']; ?>
+                                            <img src="<?= htmlspecialchars($photoSrc) ?>" style="width:50px;height:50px;object-fit:cover;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
                                         <?php else: ?>
                                             <div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#e5e7eb,#d1d5db);display:flex;align-items:center;justify-content:center;">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" style="width:24px;height:24px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
