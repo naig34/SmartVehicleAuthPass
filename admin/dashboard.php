@@ -16,6 +16,7 @@ $stmt = $pdo->query("SELECT v.*,
         ELSE s.name
     END as owner_name,
     CASE
+        WHEN v.picture IS NOT NULL AND v.picture != '' THEN v.picture
         WHEN v.owner_type = 'Teacher/Staff' THEN t.profile_picture
         ELSE s.profile_picture
     END as owner_photo

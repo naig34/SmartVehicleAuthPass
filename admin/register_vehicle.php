@@ -181,8 +181,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $studentOwnerId = null;
             $teacherOwnerId = $ownerId;
         }
-        $stmt = $pdo->prepare("INSERT INTO vehicles (owner_type, student_owner_id, teacher_owner_id, type, registered_under, color, brand, plate_number, status, date_registered, date_expiration, qr_code_path, vehicle_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Not Expired', ?, ?, ?, ?)");
-        $stmt->execute([$ownerType, $studentOwnerId, $teacherOwnerId, $vehicleType, $registeredUnder, $color, $brand, $plateNumber, $dateRegistered, $dateExpiration, $qrPath, $vehicleImagePath]);
+        $stmt = $pdo->prepare("INSERT INTO vehicles (owner_type, student_owner_id, teacher_owner_id, type, registered_under, color, brand, plate_number, status, date_registered, date_expiration, qr_code_path, vehicle_image, picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Not Expired', ?, ?, ?, ?, ?)");
+        $stmt->execute([$ownerType, $studentOwnerId, $teacherOwnerId, $vehicleType, $registeredUnder, $color, $brand, $plateNumber, $dateRegistered, $dateExpiration, $qrPath, $vehicleImagePath, $ownerPhotoPath]);
 
         $success = true;
 
