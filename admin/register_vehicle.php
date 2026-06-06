@@ -800,75 +800,59 @@ $students = $pdo->query("SELECT * FROM students")->fetchAll();
 
                                 <div class="form-grid">
                                     <div class="form-field">
-                                        <label>Year & Section</label>
-                                        <select name="year_section" class="form-input" autocomplete="off">
-                                            <option value="">Select Year & Section</option>
-                                            <optgroup label="1st Year — S.Y. 2023-2026">
-                                                <option value="1st Year - Section A (S.Y. 2023-2026)">1st Year - Section A</option>
-                                                <option value="1st Year - Section B (S.Y. 2023-2026)">1st Year - Section B</option>
-                                                <option value="1st Year - Section C (S.Y. 2023-2026)">1st Year - Section C</option>
-                                                <option value="1st Year - Section D (S.Y. 2023-2026)">1st Year - Section D</option>
-                                                <option value="1st Year - Section E (S.Y. 2023-2026)">1st Year - Section E</option>
-                                                <option value="1st Year - Section F (S.Y. 2023-2026)">1st Year - Section F</option>
-                                                <option value="1st Year - Section G (S.Y. 2023-2026)">1st Year - Section G</option>
-                                                <option value="1st Year - Section H (S.Y. 2023-2026)">1st Year - Section H</option>
-                                                <option value="1st Year - Section I (S.Y. 2023-2026)">1st Year - Section I</option>
-                                                <option value="1st Year - Section J (S.Y. 2023-2026)">1st Year - Section J</option>
-                                                <option value="1st Year - Section K (S.Y. 2023-2026)">1st Year - Section K</option>
+                                        <label>Course <span class="required">*</span></label>
+                                        <select name="course" id="studentCourse" class="form-input" autocomplete="off" onchange="updateYearSection()">
+                                            <option value="">Select Course</option>
+                                            <optgroup label="Diploma Courses (3 Years)">
+                                                <option value="DIPLOMA IN SOFTWARE ENGINEERING">DIPLOMA IN SOFTWARE ENGINEERING</option>
+                                                <option value="DIPLOMA IN DIGITAL ARTS TECHNOLOGY">DIPLOMA IN DIGITAL ARTS TECHNOLOGY</option>
+                                                <option value="DIPLOMA IN TOURISM TECHNOLOGY">DIPLOMA IN TOURISM TECHNOLOGY</option>
                                             </optgroup>
-                                            <optgroup label="2nd Year — S.Y. 2023-2026">
-                                                <option value="2nd Year - Section A (S.Y. 2023-2026)">2nd Year - Section A</option>
-                                                <option value="2nd Year - Section B (S.Y. 2023-2026)">2nd Year - Section B</option>
-                                                <option value="2nd Year - Section C (S.Y. 2023-2026)">2nd Year - Section C</option>
-                                                <option value="2nd Year - Section D (S.Y. 2023-2026)">2nd Year - Section D</option>
-                                                <option value="2nd Year - Section E (S.Y. 2023-2026)">2nd Year - Section E</option>
-                                                <option value="2nd Year - Section F (S.Y. 2023-2026)">2nd Year - Section F</option>
-                                                <option value="2nd Year - Section G (S.Y. 2023-2026)">2nd Year - Section G</option>
-                                                <option value="2nd Year - Section H (S.Y. 2023-2026)">2nd Year - Section H</option>
-                                                <option value="2nd Year - Section I (S.Y. 2023-2026)">2nd Year - Section I</option>
-                                                <option value="2nd Year - Section J (S.Y. 2023-2026)">2nd Year - Section J</option>
-                                                <option value="2nd Year - Section K (S.Y. 2023-2026)">2nd Year - Section K</option>
-                                            </optgroup>
-                                            <optgroup label="3rd Year — S.Y. 2023-2026">
-                                                <option value="3rd Year - Section A (S.Y. 2023-2026)">3rd Year - Section A</option>
-                                                <option value="3rd Year - Section B (S.Y. 2023-2026)">3rd Year - Section B</option>
-                                                <option value="3rd Year - Section C (S.Y. 2023-2026)">3rd Year - Section C</option>
-                                                <option value="3rd Year - Section D (S.Y. 2023-2026)">3rd Year - Section D</option>
-                                                <option value="3rd Year - Section E (S.Y. 2023-2026)">3rd Year - Section E</option>
-                                                <option value="3rd Year - Section F (S.Y. 2023-2026)">3rd Year - Section F</option>
-                                                <option value="3rd Year - Section G (S.Y. 2023-2026)">3rd Year - Section G</option>
-                                                <option value="3rd Year - Section H (S.Y. 2023-2026)">3rd Year - Section H</option>
-                                                <option value="3rd Year - Section I (S.Y. 2023-2026)">3rd Year - Section I</option>
-                                                <option value="3rd Year - Section J (S.Y. 2023-2026)">3rd Year - Section J</option>
-                                                <option value="3rd Year - Section K (S.Y. 2023-2026)">3rd Year - Section K</option>
-                                            </optgroup>
-                                            <optgroup label="4th Year — S.Y. 2023-2026">
-                                                <option value="4th Year - Section A (S.Y. 2023-2026)">4th Year - Section A</option>
-                                                <option value="4th Year - Section B (S.Y. 2023-2026)">4th Year - Section B</option>
-                                                <option value="4th Year - Section C (S.Y. 2023-2026)">4th Year - Section C</option>
-                                                <option value="4th Year - Section D (S.Y. 2023-2026)">4th Year - Section D</option>
-                                                <option value="4th Year - Section E (S.Y. 2023-2026)">4th Year - Section E</option>
-                                                <option value="4th Year - Section F (S.Y. 2023-2026)">4th Year - Section F</option>
-                                                <option value="4th Year - Section G (S.Y. 2023-2026)">4th Year - Section G</option>
-                                                <option value="4th Year - Section H (S.Y. 2023-2026)">4th Year - Section H</option>
-                                                <option value="4th Year - Section I (S.Y. 2023-2026)">4th Year - Section I</option>
-                                                <option value="4th Year - Section J (S.Y. 2023-2026)">4th Year - Section J</option>
-                                                <option value="4th Year - Section K (S.Y. 2023-2026)">4th Year - Section K</option>
+                                            <optgroup label="Bachelor Courses (4 Years)">
+                                                <option value="BACHELOR SCIENCE IN INFORMATION TECHNOLOGY">BACHELOR SCIENCE IN INFORMATION TECHNOLOGY</option>
+                                                <option value="COLLEGE OF BUSINESS ADMINISTRATION">COLLEGE OF BUSINESS ADMINISTRATION</option>
                                             </optgroup>
                                         </select>
                                     </div>
                                     <div class="form-field">
-                                        <label>Course</label>
-                                        <select name="course" class="form-input" autocomplete="off">
-                                            <option value="">Select Course</option>
-                                            <option value="DIPLOMA IN SOFTWARE ENGINEERING">DIPLOMA IN SOFTWARE ENGINEERING</option>
-                                            <option value="DIPLOMA IN DIGITAL ARTS TECHNOLOGY">DIPLOMA IN DIGITAL ARTS TECHNOLOGY</option>
-                                            <option value="DIPLOMA IN TOURISM TECHNOLOGY">DIPLOMA IN TOURISM TECHNOLOGY</option>
-                                            <option value="BACHELOR SCIENCE IN INFORMATION TECHNOLOGY">BACHELOR SCIENCE IN INFORMATION TECHNOLOGY</option>
-                                            <option value="COLLEGE OF BUSINESS ADMINISTRATION">COLLEGE OF BUSINESS ADMINISTRATION</option>
+                                        <label>Year & Section <span class="required">*</span></label>
+                                        <select name="year_section" id="studentYearSection" class="form-input" autocomplete="off" disabled>
+                                            <option value="">Select Course First</option>
                                         </select>
                                     </div>
                                 </div>
+
+                                <script>
+                                function updateYearSection() {
+                                    const course = document.getElementById('studentCourse').value;
+                                    const yearSelect = document.getElementById('studentYearSection');
+                                    const sections = ['A','B','C','D','E','F','G','H','I','J','K'];
+                                    const years = course.startsWith('DIPLOMA') ? ['1st','2nd','3rd'] : ['1st','2nd','3rd','4th'];
+                                    const sy = 'S.Y. 2023-2026';
+
+                                    yearSelect.innerHTML = '<option value="">Select Year & Section</option>';
+
+                                    if (!course) {
+                                        yearSelect.innerHTML = '<option value="">Select Course First</option>';
+                                        yearSelect.disabled = true;
+                                        return;
+                                    }
+
+                                    years.forEach(function(year) {
+                                        const group = document.createElement('optgroup');
+                                        group.label = year + ' Year — ' + sy;
+                                        sections.forEach(function(sec) {
+                                            const opt = document.createElement('option');
+                                            opt.value = year + ' Year - Section ' + sec + ' (' + sy + ')';
+                                            opt.textContent = year + ' Year - Section ' + sec;
+                                            group.appendChild(opt);
+                                        });
+                                        yearSelect.appendChild(group);
+                                    });
+
+                                    yearSelect.disabled = false;
+                                }
+                                </script>
 
                                 <div class="form-grid">
                                     <div class="form-field">
