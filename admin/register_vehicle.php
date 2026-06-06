@@ -802,11 +802,59 @@ $students = $pdo->query("SELECT * FROM students")->fetchAll();
                                     <div class="form-field">
                                         <label>Year & Section</label>
                                         <select name="year_section" class="form-input" autocomplete="off">
-                                            <option value="">Select Year</option>
-                                            <option value="1st Year">1st Year</option>
-                                            <option value="2nd Year">2nd Year</option>
-                                            <option value="3rd Year">3rd Year</option>
-                                            <option value="4th Year">4th Year</option>
+                                            <option value="">Select Year & Section</option>
+                                            <optgroup label="1st Year — S.Y. 2023-2026">
+                                                <option value="1st Year - Section A (S.Y. 2023-2026)">1st Year - Section A</option>
+                                                <option value="1st Year - Section B (S.Y. 2023-2026)">1st Year - Section B</option>
+                                                <option value="1st Year - Section C (S.Y. 2023-2026)">1st Year - Section C</option>
+                                                <option value="1st Year - Section D (S.Y. 2023-2026)">1st Year - Section D</option>
+                                                <option value="1st Year - Section E (S.Y. 2023-2026)">1st Year - Section E</option>
+                                                <option value="1st Year - Section F (S.Y. 2023-2026)">1st Year - Section F</option>
+                                                <option value="1st Year - Section G (S.Y. 2023-2026)">1st Year - Section G</option>
+                                                <option value="1st Year - Section H (S.Y. 2023-2026)">1st Year - Section H</option>
+                                                <option value="1st Year - Section I (S.Y. 2023-2026)">1st Year - Section I</option>
+                                                <option value="1st Year - Section J (S.Y. 2023-2026)">1st Year - Section J</option>
+                                                <option value="1st Year - Section K (S.Y. 2023-2026)">1st Year - Section K</option>
+                                            </optgroup>
+                                            <optgroup label="2nd Year — S.Y. 2023-2026">
+                                                <option value="2nd Year - Section A (S.Y. 2023-2026)">2nd Year - Section A</option>
+                                                <option value="2nd Year - Section B (S.Y. 2023-2026)">2nd Year - Section B</option>
+                                                <option value="2nd Year - Section C (S.Y. 2023-2026)">2nd Year - Section C</option>
+                                                <option value="2nd Year - Section D (S.Y. 2023-2026)">2nd Year - Section D</option>
+                                                <option value="2nd Year - Section E (S.Y. 2023-2026)">2nd Year - Section E</option>
+                                                <option value="2nd Year - Section F (S.Y. 2023-2026)">2nd Year - Section F</option>
+                                                <option value="2nd Year - Section G (S.Y. 2023-2026)">2nd Year - Section G</option>
+                                                <option value="2nd Year - Section H (S.Y. 2023-2026)">2nd Year - Section H</option>
+                                                <option value="2nd Year - Section I (S.Y. 2023-2026)">2nd Year - Section I</option>
+                                                <option value="2nd Year - Section J (S.Y. 2023-2026)">2nd Year - Section J</option>
+                                                <option value="2nd Year - Section K (S.Y. 2023-2026)">2nd Year - Section K</option>
+                                            </optgroup>
+                                            <optgroup label="3rd Year — S.Y. 2023-2026">
+                                                <option value="3rd Year - Section A (S.Y. 2023-2026)">3rd Year - Section A</option>
+                                                <option value="3rd Year - Section B (S.Y. 2023-2026)">3rd Year - Section B</option>
+                                                <option value="3rd Year - Section C (S.Y. 2023-2026)">3rd Year - Section C</option>
+                                                <option value="3rd Year - Section D (S.Y. 2023-2026)">3rd Year - Section D</option>
+                                                <option value="3rd Year - Section E (S.Y. 2023-2026)">3rd Year - Section E</option>
+                                                <option value="3rd Year - Section F (S.Y. 2023-2026)">3rd Year - Section F</option>
+                                                <option value="3rd Year - Section G (S.Y. 2023-2026)">3rd Year - Section G</option>
+                                                <option value="3rd Year - Section H (S.Y. 2023-2026)">3rd Year - Section H</option>
+                                                <option value="3rd Year - Section I (S.Y. 2023-2026)">3rd Year - Section I</option>
+                                                <option value="3rd Year - Section J (S.Y. 2023-2026)">3rd Year - Section J</option>
+                                                <option value="3rd Year - Section K (S.Y. 2023-2026)">3rd Year - Section K</option>
+                                            </optgroup>
+                                            <optgroup label="4th Year — S.Y. 2023-2026">
+                                                <option value="4th Year - Section A (S.Y. 2023-2026)">4th Year - Section A</option>
+                                                <option value="4th Year - Section B (S.Y. 2023-2026)">4th Year - Section B</option>
+                                                <option value="4th Year - Section C (S.Y. 2023-2026)">4th Year - Section C</option>
+                                                <option value="4th Year - Section D (S.Y. 2023-2026)">4th Year - Section D</option>
+                                                <option value="4th Year - Section E (S.Y. 2023-2026)">4th Year - Section E</option>
+                                                <option value="4th Year - Section F (S.Y. 2023-2026)">4th Year - Section F</option>
+                                                <option value="4th Year - Section G (S.Y. 2023-2026)">4th Year - Section G</option>
+                                                <option value="4th Year - Section H (S.Y. 2023-2026)">4th Year - Section H</option>
+                                                <option value="4th Year - Section I (S.Y. 2023-2026)">4th Year - Section I</option>
+                                                <option value="4th Year - Section J (S.Y. 2023-2026)">4th Year - Section J</option>
+                                                <option value="4th Year - Section K (S.Y. 2023-2026)">4th Year - Section K</option>
+                                            </optgroup>
                                         </select>
                                     </div>
                                     <div class="form-field">
