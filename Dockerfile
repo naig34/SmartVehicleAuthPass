@@ -3,18 +3,8 @@ FROM php:8.1-apache
 # Install PHP extensions needed for MySQL
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-# Enable Apache mod_rewrite and mpm_prefork
+# Enable Apache mod_rewrite
 RUN a2enmod rewrite
-RUN a2dismod mpm_event || true && a2enmod mpm_prefork || true
-
-# Limit Apache workers to stay under Clever Cloud's 5 connection limit
-RUN echo '<IfModule mpm_prefork_module>\n\
-    StartServers 1\n\
-    MinSpareServers 1\n\
-    MaxSpareServers 2\n\
-    MaxRequestWorkers 4\n\
-    MaxConnectionsPerChild 100\n\
-</IfModule>' > /etc/apache2/mods-available/mpm_prefork.conf
 
 # Set working directory
 WORKDIR /var/www/html
